@@ -40,7 +40,10 @@ class MainActivity : AppCompatActivity(), BoardView.OnTouchListener {
         buttonDel.setOnClickListener{viewModel.sudokuGame.delete()
             viewModel.sudokuGame.check()}
 
-        buttonAdd.setOnClickListener{viewModel.sudokuGame.solver()
+        buttonAll.setOnClickListener{viewModel.sudokuGame.solver()
+        viewModel.sudokuGame.vivod()}
+
+        buttonAdd.setOnClickListener{viewModel.sudokuGame.solveOne()
         viewModel.sudokuGame.vivod()}
     }
 

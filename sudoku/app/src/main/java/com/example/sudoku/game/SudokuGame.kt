@@ -13,8 +13,6 @@ class SudokuGame {
 
     private val board: Board
 
-    private var count: Int = 0
-
     init {
         val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, 0) }
         board = Board(9, cells)
@@ -85,7 +83,6 @@ class SudokuGame {
     }
 
     fun solver(): Boolean{
-        count += 1
         var empty: Boolean = false
         var emptyR: Int = 0
         var emptyC: Int = 0
@@ -121,10 +118,30 @@ class SudokuGame {
 
             }
         }
-        println( count)
         return false
     }
+
     fun vivod(){
         cellsLiveData.postValue(board.cells)
+    }
+
+    fun solveOne(){
+        val l: List<Int> = emptyList()
+        var ml = l.toMutableList()
+        for(i in 0..8){
+            for(j in 0..8){
+                val cell = board.getCell(i, j)
+                ml.add(cell.value)
+            }
+        }
+        solver()
+        for(i in 0..80){
+            val cell = board.getCell(i/9, i%9)
+            if (i/9 == selectedRow && i%9 == selectedCol){
+                println("good")
+            } else {
+                cell.value = ml[i]
+            }
+        }
     }
 }
