@@ -4,14 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.MainActivity">
+    tools:context=".view.MainActivity"
+    >
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="409dp"
+        android:layout_alignTop="@+id/BoardView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="175dp"
+        app:srcCompat="@drawable/sakura" />
 
     <com.example.sudoku.view.custom.BoardView
         android:id="@+id/BoardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="175dp" />
+        android:layout_marginBottom="175dp"
+        />
 
     <GridLayout
         android:id="@+id/buttonsLayout"

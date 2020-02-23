@@ -38,39 +38,44 @@ class BoardView(context: Context, attributeSet: AttributeSet) : View(context, at
     private val selectedCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#b1d98f")
+        setAlpha(180)
     }
 
     private val conflictingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#e3e3e3")
+        setAlpha(180)
     }
 
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 24F
+        textSize = 28F
     }
 
     private val startingCellTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 32F
+        textSize = 28F
         typeface = Typeface.DEFAULT_BOLD
     }
 
     private val startingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#acacac")
+        setAlpha(180)
     }
 
     private val errCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#cc0000")
+        setAlpha(180)
     }
 
     private val errCellSelected = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#FF6666")
+        setAlpha(180)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -92,8 +97,10 @@ class BoardView(context: Context, attributeSet: AttributeSet) : View(context, at
         cells?.forEach {
             val r = it.row
             val c = it.col
-            if (it.isErrCell && selectedRow == r && selectedCol == c){
+            if (it.isErrCell && selectedRow == r && selectedCol == c) {
                 fillCell(canvas, r, c, errCellSelected)
+            } else if (r == selectedRow && c == selectedCol){
+                fillCell(canvas, r, c, selectedCellPaint)
             } else if (it.isStartingCell) {
                 fillCell(canvas, r, c, startingCellPaint)
             } else if (it.isErrCell) {
