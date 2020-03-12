@@ -144,4 +144,97 @@ class SudokuGame {
             }
         }
     }
+
+    fun cleaner(){
+        for(i in 0..80){
+            val cell = board.getCell(i/9,i%9)
+            cell.value=0
+            board.cells[i].isStartingCell=false
+        }
+        cellsLiveData.postValue(board.cells)
+    }
+
+    fun generate(): Boolean{
+        var empty: Boolean = false
+        var emptyR: Int = 0
+        var emptyC: Int = 0
+        for(r in 0..8){
+            for (c in 0..8){
+                val cell = board.getCell(r, c)
+                if (cell.value == 0){
+                    empty = true
+                    emptyR = cell.row
+                    emptyC = cell.col
+                    break
+                }
+            }
+            if (empty){
+                break
+            }
+        }
+        if (!empty){
+            return true
+        }
+        else {
+            var l: MutableList<Int> = mutableListOf(1,2,3,4,5,6,7,8,9)
+            l.shuffle()
+            for(i in 0..8){
+                if (valid(l[i], emptyR ,emptyC)){
+                    val cell = board.getCell(emptyR, emptyC)
+                    cell.value=l[i]
+
+                    if(generate()){
+                        return true
+                    }
+                    else{
+                        cell.value = 0
+                    }
+                }
+
+            }
+        }
+        return false
+    }
+
+    fun cleaneasy(){
+        var l: MutableList<Int> = mutableListOf()
+        for (i in 0..80){
+            l.add(i)
+            board.cells[i].isStartingCell=true
+        }
+        l.shuffle()
+        for (i in 0..40){
+            val cell = board.getCell(l[i]/9, l[i]%9)
+            cell.value=0
+            board.cells[l[i]].isStartingCell=false
+        }
+    }
+
+    fun cleanmid(){
+        var l: MutableList<Int> = mutableListOf()
+        for (i in 0..80){
+            l.add(i)
+            board.cells[i].isStartingCell=true
+        }
+        l.shuffle()
+        for (i in 0..50){
+            val cell = board.getCell(l[i]/9, l[i]%9)
+            cell.value=0
+            board.cells[l[i]].isStartingCell=false
+        }
+    }
+
+    fun cleanhard(){
+        var l: MutableList<Int> = mutableListOf()
+        for (i in 0..80){
+            l.add(i)
+            board.cells[i].isStartingCell=true
+        }
+        l.shuffle()
+        for (i in 0..55){
+            val cell = board.getCell(l[i]/9, l[i]%9)
+            cell.value=0
+            board.cells[l[i]].isStartingCell=false
+        }
+    }
 }

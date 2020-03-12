@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/clean"
+        android:icon="@drawable/ic_clean"
+        android:title="clean"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/easy"
+        android:title="Easy"
+        app:showAsAction="never"
+        />
+
+    <item android:id="@+id/middle"
+        android:title="Middle"
+        app:showAsAction="never"
+        />
+
+    <item android:id="@+id/hard"
+        android:title="Hard"
+        app:showAsAction="never"
+        />
+
+</menu>

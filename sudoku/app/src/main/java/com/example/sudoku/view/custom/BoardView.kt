@@ -57,7 +57,6 @@ class BoardView(context: Context, attributeSet: AttributeSet) : View(context, at
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
         textSize = 28F
-        typeface = Typeface.DEFAULT_BOLD
     }
 
     private val startingCellPaint = Paint().apply {

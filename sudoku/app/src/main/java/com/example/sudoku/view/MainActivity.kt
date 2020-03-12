@@ -4,6 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -57,5 +61,43 @@ class MainActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row,col)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.exemple_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.clean -> {
+                viewModel.sudokuGame.cleaner()
+                Toast.makeText(this, "cleaned", Toast.LENGTH_SHORT).show()
+            }
+            R.id.easy -> {
+                viewModel.sudokuGame.cleaner()
+                viewModel.sudokuGame.generate()
+                viewModel.sudokuGame.cleaneasy()
+                viewModel.sudokuGame.vivod()
+                Toast.makeText(this, "sudoku genearated", Toast.LENGTH_SHORT).show()
+            }
+
+            R.id.middle -> {
+                viewModel.sudokuGame.cleaner()
+                viewModel.sudokuGame.generate()
+                viewModel.sudokuGame.cleanmid()
+                viewModel.sudokuGame.vivod()
+                Toast.makeText(this, "sudoku genearated", Toast.LENGTH_SHORT).show()
+            }
+
+            R.id.hard -> {
+                viewModel.sudokuGame.cleaner()
+                viewModel.sudokuGame.generate()
+                viewModel.sudokuGame.cleanhard()
+                viewModel.sudokuGame.vivod()
+                Toast.makeText(this, "sudoku genearated", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
