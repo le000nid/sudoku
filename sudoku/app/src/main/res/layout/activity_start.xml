@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:background="@drawable/sakura"
+    tools:context=".view.StartActivity">
+
+    <TextView
+        android:id="@+id/mainText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="italic"
+        android:textColor="#00a86b"
+        android:textSize="80dp"
+        android:text="Sudoku Solver" />
+    <Button
+        android:id="@+id/buttonOwn"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_gravity="center"
+        android:text="Ввести своё судоку" />
+    <TextView
+        android:id="@+id/generate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:text="Сгенерировать судоку" />
+    <GridLayout
+        android:id="@+id/buttonsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rowCount="1"
+        android:columnCount="3"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true">
+        <Button
+            android:id="@+id/buttonGen1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Лёгкий" />
+        <Button
+            android:id="@+id/buttonGen2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Средний" />
+        <Button
+            android:id="@+id/buttonGen3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Сложный" />
+    </GridLayout>
+
+</LinearLayout>

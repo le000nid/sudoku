@@ -154,6 +154,16 @@ class SudokuGame {
         cellsLiveData.postValue(board.cells)
     }
 
+    fun done(){
+        for(i in 0..80){
+            val cell = board.getCell(i/9,i%9)
+            if (cell.value!=0){
+                board.cells[i].isStartingCell = true
+            }
+        }
+        cellsLiveData.postValue(board.cells)
+    }
+
     fun generate(): Boolean{
         var empty: Boolean = false
         var emptyR: Int = 0

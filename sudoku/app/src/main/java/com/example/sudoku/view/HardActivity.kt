@@ -1,24 +1,24 @@
 package com.example.sudoku.view
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
-import android.provider.MediaStore
+import android.os.Environment
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.sudoku.R
+import com.example.sudoku.game.Board
 import com.example.sudoku.game.Cell
 import com.example.sudoku.view.custom.BoardView
 import com.example.sudoku.viewmodel.playSudokuViewmodel
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), BoardView.OnTouchListener {
+class HardActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
     private lateinit var viewModel: playSudokuViewmodel
 
@@ -31,6 +31,12 @@ class MainActivity : AppCompatActivity(), BoardView.OnTouchListener {
         viewModel = ViewModelProviders.of(this).get(playSudokuViewmodel::class.java)
         viewModel.sudokuGame.selectedCellLiveData.observe(this, Observer { updateSelectedCellUI(it) })
         viewModel.sudokuGame.cellsLiveData.observe(this, Observer { updateCells(it) })
+
+        viewModel.sudokuGame.cleaner()
+        viewModel.sudokuGame.generate()
+        viewModel.sudokuGame.cleanhard()
+        viewModel.sudokuGame.vivod()
+        Toast.makeText(this, "sudoku genearated", Toast.LENGTH_SHORT).show()
 
         val buttons = listOf(button1, button2, button3, button4, button5, button6, button7, button8, button9)
 
@@ -45,10 +51,10 @@ class MainActivity : AppCompatActivity(), BoardView.OnTouchListener {
             viewModel.sudokuGame.check()}
 
         buttonAll.setOnClickListener{viewModel.sudokuGame.solver()
-        viewModel.sudokuGame.vivod()}
+            viewModel.sudokuGame.vivod()}
 
         buttonAdd.setOnClickListener{viewModel.sudokuGame.solveOne()
-        viewModel.sudokuGame.vivod()}
+            viewModel.sudokuGame.vivod()}
     }
 
     private fun updateCells(cells: List<Cell>?) = cells?.let {
@@ -61,43 +67,5 @@ class MainActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row,col)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.exemple_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.clean -> {
-                viewModel.sudokuGame.cleaner()
-                Toast.makeText(this, "cleaned", Toast.LENGTH_SHORT).show()
-            }
-            R.id.easy -> {
-                viewModel.sudokuGame.cleaner()
-                viewModel.sudokuGame.generate()
-                viewModel.sudokuGame.cleaneasy()
-                viewModel.sudokuGame.vivod()
-                Toast.makeText(this, "sudoku genearated", Toast.LENGTH_SHORT).show()
-            }
-
-            R.id.middle -> {
-                viewModel.sudokuGame.cleaner()
-                viewModel.sudokuGame.generate()
-                viewModel.sudokuGame.cleanmid()
-                viewModel.sudokuGame.vivod()
-                Toast.makeText(this, "sudoku genearated", Toast.LENGTH_SHORT).show()
-            }
-
-            R.id.hard -> {
-                viewModel.sudokuGame.cleaner()
-                viewModel.sudokuGame.generate()
-                viewModel.sudokuGame.cleanhard()
-                viewModel.sudokuGame.vivod()
-                Toast.makeText(this, "sudoku genearated", Toast.LENGTH_SHORT).show()
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }
