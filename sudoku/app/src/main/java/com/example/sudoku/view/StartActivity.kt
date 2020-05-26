@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import com.example.sudoku.OpenCVsudoku.RecognActivity
 import com.example.sudoku.R
 import kotlinx.android.synthetic.main.activity_start.*
 
@@ -25,6 +26,9 @@ class StartActivity : AppCompatActivity() {
         buttonGen3.setOnClickListener{
             hardsud()
         }
+        ButtonScan.setOnClickListener{
+            recogsud()
+        }
     }
 
     fun ownsud() {
@@ -41,6 +45,10 @@ class StartActivity : AppCompatActivity() {
     }
     fun hardsud(){
         val intent = Intent(this, HardActivity::class.java)
+        startActivity(intent)
+    }
+    fun recogsud(){
+        val intent = Intent(this, RecognActivity::class.java)
         startActivity(intent)
     }
 }

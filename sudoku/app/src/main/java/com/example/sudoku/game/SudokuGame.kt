@@ -56,6 +56,13 @@ class SudokuGame {
         }
     }
 
+    fun vvod(temp: IntArray){
+        for(i in 0..80){
+            val cell = board.getCell(i/9, i%9)
+            cell.value = temp[i]
+        }
+    }
+
     fun valid(n: Int, r: Int, c: Int): Boolean{
         for(i in 0..8){
             val cell = board.getCell(r, i)
