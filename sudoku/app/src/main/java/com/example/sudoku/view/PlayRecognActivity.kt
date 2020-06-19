@@ -32,7 +32,6 @@ class PlayRecognActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
         viewModel.sudokuGame.vvod(intent.getIntArrayExtra("ar"))
         viewModel.sudokuGame.vivod()
-        Toast.makeText(this, "correct the mistakes", Toast.LENGTH_SHORT).show()
 
         val buttons = listOf(button1, button2, button3, button4, button5, button6, button7, button8, button9)
 
