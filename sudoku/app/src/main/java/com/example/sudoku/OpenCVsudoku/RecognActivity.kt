@@ -98,28 +98,28 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
                 displayMat,
                 Point(points[0].x, points[0].y),
                 Point(points[1].x, points[1].y),
-                Scalar(255.0, 0.0, 0.0),
+                Scalar(0.0, 255.0, 0.0),
                 2
             )
             Imgproc.line(
                 displayMat,
                 Point(points[1].x, points[1].y),
                 Point(points[2].x, points[2].y),
-                Scalar(255.0, 0.0, 0.0),
+                Scalar(0.0, 255.0, 0.0),
                 2
             )
             Imgproc.line(
                 displayMat,
                 Point(points[2].x, points[2].y),
                 Point(points[3].x, points[3].y),
-                Scalar(255.0, 0.0, 0.0),
+                Scalar(0.0, 255.0, 0.0),
                 2
             )
             Imgproc.line(
                 displayMat,
                 Point(points[3].x, points[3].y),
                 Point(points[0].x, points[0].y),
-                Scalar(255.0, 0.0, 0.0),
+                Scalar(0.0, 255.0, 0.0),
                 2
             )
             // crop the image
