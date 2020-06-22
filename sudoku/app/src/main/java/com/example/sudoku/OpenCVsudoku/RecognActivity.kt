@@ -140,21 +140,28 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
                     sortedPoints[3] = Point(points[i].x, points[i].y)
                 }
             }
-
-            val src = MatOfPoint2f(
-                points[1],
-                points[0],
-                points[2],
-                points[3]
-            )
-            val dst = MatOfPoint2f(
-                Point(0.0, 0.0),
-                Point(500.0-1, 0.0),
-                Point(0.0, 500.0-1),
-                Point(500.0-1, 500.0-1)
-            )
-            val warpMat = Imgproc.getPerspectiveTransform(src, dst)
-            Imgproc.warpPerspective(displayMat, cropped, warpMat, Size(500.0, 500.0))
+            var nulled: Boolean = false
+            for(i in 0..3){
+                if (sortedPoints[i]==null){
+                    nulled=true
+                }
+            }
+            if(!nulled) {
+                val src = MatOfPoint2f(
+                    sortedPoints[0],
+                    sortedPoints[1],
+                    sortedPoints[2],
+                    sortedPoints[3]
+                )
+                val dst = MatOfPoint2f(
+                    Point(0.0, 0.0),
+                    Point(500.0 - 1, 0.0),
+                    Point(0.0, 500.0 - 1),
+                    Point(500.0 - 1, 500.0 - 1)
+                )
+                val warpMat = Imgproc.getPerspectiveTransform(src, dst)
+                Imgproc.warpPerspective(displayMat, cropped, warpMat, Size(500.0, 500.0))
+            }
         }
         return displayMat
     }
