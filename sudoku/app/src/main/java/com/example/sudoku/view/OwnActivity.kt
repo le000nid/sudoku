@@ -45,9 +45,6 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
         buttonDel.setOnClickListener{viewModel.sudokuGame.delete()
             viewModel.sudokuGame.check()}
 
-        buttonAll.setOnClickListener{viewModel.sudokuGame.solver()
-            viewModel.sudokuGame.vivod()}
-
         buttonAdd.setOnClickListener{viewModel.sudokuGame.solveOne()
             viewModel.sudokuGame.vivod()}
     }
@@ -77,6 +74,9 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
             }
             R.id.done -> {
                 viewModel.sudokuGame.done()
+            }
+            R.id.doo -> {
+                viewModel.sudokuGame.solver()
             }
         }
         return super.onOptionsItemSelected(item)

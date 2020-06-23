@@ -45,9 +45,6 @@ class PlayRecognActivity : AppCompatActivity(), BoardView.OnTouchListener {
         buttonDel.setOnClickListener{viewModel.sudokuGame.delete()
             viewModel.sudokuGame.check()}
 
-        buttonAll.setOnClickListener{viewModel.sudokuGame.solver()
-            viewModel.sudokuGame.vivod()}
-
         buttonAdd.setOnClickListener{viewModel.sudokuGame.solveOne()
             viewModel.sudokuGame.vivod()}
     }

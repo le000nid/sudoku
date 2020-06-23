@@ -17,6 +17,7 @@ import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import java.io.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,7 +32,8 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
     var tessBaseApi: TessBaseAPI? = null
 
-    val DATA_PATH: String = "/mnt/sdcard/tesseract"
+    val DATA_PATH: String = android.os.Environment.getExternalStorageDirectory().toString().toString() +
+            "/Image2Text/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -166,7 +168,28 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         return displayMat
     }
     fun capture(v: View?) {
+        val dir = File(DATA_PATH + "tessdata")
+        dir.mkdirs()
 
+        if (!File(DATA_PATH + "tessdata/eng.traineddata").exists()) {
+            try {
+                val assetManager = assets
+                val `in`: InputStream = assetManager.open("eng.traineddata")
+                val out: OutputStream = FileOutputStream(
+                    DATA_PATH
+                            + "tessdata/eng.traineddata"
+                )
+                val buf = ByteArray(1024)
+                var len: Int
+                while (`in`.read(buf).also { len = it } > 0) {
+                    out.write(buf, 0, len)
+                }
+                `in`.close()
+                out.close()
+            }
+            catch (e: IOException) {
+            }
+        }
         if (cropped!!.width() < 1 || cropped!!.height() < 1) {
             finish()
         }
