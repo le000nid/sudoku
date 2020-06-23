@@ -77,6 +77,7 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
             }
             R.id.doo -> {
                 viewModel.sudokuGame.solver()
+                viewModel.sudokuGame.vivod()
             }
         }
         return super.onOptionsItemSelected(item)
