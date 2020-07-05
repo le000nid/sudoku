@@ -9,7 +9,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.sudoku.R
-import com.example.sudoku.view.PlayRecognActivity
+import com.example.sudoku.view.OwnActivity
 import com.googlecode.tesseract.android.TessBaseAPI
 import org.opencv.android.CameraBridgeViewBase
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame
@@ -25,8 +25,6 @@ import kotlin.collections.ArrayList
 class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private var mOpenCvCameraView: PortraitCameraView ? = null
-
-    private lateinit var play: PlayRecognActivity
 
     var cropped: Mat? = null
 
@@ -260,7 +258,7 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         for (i in 0..80) {
             temp[i] = sudosa[i/9][i%9]
         }
-        val intent = Intent(this, PlayRecognActivity::class.java)
+        val intent = Intent(this, OwnActivity::class.java)
         intent.putExtra("ar", temp)
         startActivity(intent)
     }

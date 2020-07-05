@@ -18,20 +18,22 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.StartActivity">
+        <activity android:name=".view.StartActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.OwnActivity"></activity>
-        <activity android:name=".view.EasyActivity"></activity>
-        <activity android:name=".view.MidActivity"></activity>
-        <activity android:name=".view.HardActivity"></activity>
-        <activity android:name=".OpenCVsudoku.RecognActivity"></activity>
-        <activity android:name=".view.PlayRecognActivity"></activity>
+        <activity android:name=".view.OwnActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.GenActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".OpenCVsudoku.RecognActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

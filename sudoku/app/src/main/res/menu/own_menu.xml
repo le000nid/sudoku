@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/doo"
-        android:icon="@drawable/ic_done"
-        android:title="doo"
+        android:icon="@drawable/ic_apps_black_24dp"
+        android:title="Solve sudoku"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/clean"
         android:icon="@drawable/ic_clean"
-        android:title="clean"
+        android:title="Erase"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/done"
-        android:icon="@drawable/ic_apps_black_24dp"
-        android:title="done"
+        android:icon="@drawable/ic_done"
+        android:title="Sudoku is ready"
         app:showAsAction="ifRoom" />
 </menu>

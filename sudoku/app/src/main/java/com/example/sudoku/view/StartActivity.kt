@@ -1,15 +1,20 @@
 package com.example.sudoku.view
 
+import android.Manifest
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.sudoku.OpenCVsudoku.RecognActivity
 import com.example.sudoku.R
 import kotlinx.android.synthetic.main.activity_start.*
 
-class StartActivity : AppCompatActivity() {
 
+class StartActivity : AppCompatActivity() {
+    private val PERMISSION_CODE = 100
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
@@ -29,6 +34,17 @@ class StartActivity : AppCompatActivity() {
         ButtonScan.setOnClickListener{
             recogsud()
         }
+        checkPerm(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, PERMISSION_CODE)
+    }
+
+    private fun checkPerm(permission: String, permission2: String, requestCode: Int) {
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_DENIED && ContextCompat.checkSelfPermission(this, permission2) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, arrayOf(permission, permission2), requestCode)
+        } else if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
+        } else if (ContextCompat.checkSelfPermission(this, permission2) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, arrayOf(permission2), requestCode)
+        }
     }
 
     fun ownsud() {
@@ -36,15 +52,18 @@ class StartActivity : AppCompatActivity() {
         startActivity(intent)
     }
     fun easysud(){
-        val intent = Intent(this, EasyActivity::class.java)
+        val intent = Intent(this, GenActivity::class.java)
+        intent.putExtra("dif", "1")
         startActivity(intent)
     }
     fun midsud(){
-        val intent = Intent(this, MidActivity::class.java)
+        val intent = Intent(this, GenActivity::class.java)
+        intent.putExtra("dif", "2")
         startActivity(intent)
     }
     fun hardsud(){
-        val intent = Intent(this, HardActivity::class.java)
+        val intent = Intent(this, GenActivity::class.java)
+        intent.putExtra("dif", "3")
         startActivity(intent)
     }
     fun recogsud(){

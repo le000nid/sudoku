@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
         android:layout_gravity="center"
-        android:text="Ввести своё судоку" />
+        android:text="Own sudoku" />
     <TextView
         android:id="@+id/generate"
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:gravity="center"
         android:textColor="#000000"
         android:textSize="20dp"
-        android:text="Сгенерировать судоку" />
+        android:text="Generate sudoku" />
     <GridLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="wrap_content"
@@ -44,17 +44,17 @@
             android:id="@+id/buttonGen1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Лёгкий" />
+            android:text="Easy" />
         <Button
             android:id="@+id/buttonGen2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Средний" />
+            android:text="Normal" />
         <Button
             android:id="@+id/buttonGen3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Сложный" />
+            android:text="Hard" />
     </GridLayout>
     <TextView
         android:id="@+id/scantext"
@@ -63,13 +63,13 @@
         android:gravity="center"
         android:textColor="#000000"
         android:textSize="20dp"
-        android:text="Распознать судоку" />
+        android:text="Recognize sudoku" />
     <Button
         android:id="@+id/ButtonScan"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="scan"
+        android:text="camera"
         />
 
 </LinearLayout>

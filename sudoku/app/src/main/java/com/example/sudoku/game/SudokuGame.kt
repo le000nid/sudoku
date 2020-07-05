@@ -1,17 +1,19 @@
 package com.example.sudoku.game
 
 import android.graphics.Canvas
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.sudoku.view.custom.BoardView
+import kotlin.math.log
 
 class SudokuGame {
     var selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
     var cellsLiveData = MutableLiveData<List<Cell>>()
 
-    private var selectedRow = -1
-    private var selectedCol = -1
+    var selectedRow = -1
+    var selectedCol = -1
 
-    private val board: Board
+    val board: Board
 
     init {
         val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, 0) }
@@ -54,6 +56,18 @@ class SudokuGame {
                 }
             }
         }
+    }
+
+    fun noerr(): Boolean{
+        for(i in 0..8){
+            for(j in 0..8) {
+                val cell = board.getCell(i, j)
+                if (cell.isErrCell){
+                    return false
+                }
+            }
+        }
+        return true
     }
 
     fun vvod(temp: IntArray){
@@ -157,6 +171,7 @@ class SudokuGame {
             val cell = board.getCell(i/9,i%9)
             cell.value=0
             board.cells[i].isStartingCell=false
+            board.cells[i].isErrCell=false
         }
         cellsLiveData.postValue(board.cells)
     }
@@ -253,5 +268,17 @@ class SudokuGame {
             cell.value=0
             board.cells[l[i]].isStartingCell=false
         }
+    }
+
+    fun empcheck(): Boolean{
+        for(r in 0..8){
+            for (c in 0..8){
+                val cell = board.getCell(r, c)
+                if (cell.value == 0){
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
