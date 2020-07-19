@@ -6,8 +6,8 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="8"
-8-->C:\Users\Le000n1d\Documents\project\sudoku\openCVLibrary3410\src\main\AndroidManifest.xml
+8-->C:\Users\le000nid\Documents\project\sudoku\openCVLibrary3410\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="28" />
-9-->C:\Users\Le000n1d\Documents\project\sudoku\openCVLibrary3410\src\main\AndroidManifest.xml
+9-->C:\Users\le000nid\Documents\project\sudoku\openCVLibrary3410\src\main\AndroidManifest.xml
 10
 11</manifest>

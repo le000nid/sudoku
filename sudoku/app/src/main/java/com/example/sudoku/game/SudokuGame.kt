@@ -42,6 +42,7 @@ class SudokuGame {
 
     fun delete() {
         val cell = board.getCell(selectedRow, selectedCol)
+        if (cell.isStartingCell) return
         cell.value = 0
         cellsLiveData.postValue(board.cells)
     }

@@ -33,8 +33,7 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
         viewModel.sudokuGame.cellsLiveData.observe(this, Observer { updateCells(it) })
 
         val intent = intent
-        if (intent.getIntArrayExtra("ar") == null){
-        } else {
+        if (intent.getIntArrayExtra("ar") != null){
             viewModel.sudokuGame.vvod(intent.getIntArrayExtra("ar"))
             viewModel.sudokuGame.vivod()
         }
