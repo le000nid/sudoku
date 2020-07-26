@@ -78,6 +78,46 @@ class SudokuGame {
         }
     }
 
+    fun vvodSt():String{
+        var bor = ""
+        for(i in 0..80){
+            val cell = board.getCell(i/9, i%9)
+            bor += cell.value
+        }
+        return bor
+    }
+
+    fun vvodStart():String{
+        var bor = ""
+        for (i in 0..80){
+            val cell = board.getCell(i/9, i%9)
+            if (cell.isStartingCell){
+                bor += 1
+            } else {
+                bor += 0
+            }
+        }
+        return bor
+    }
+
+    fun vivodStart(cellStart: String){
+        for (i in 0..80){
+            if (cellStart[i].toString().toInt() == 1){
+                val cell = board.getCell(i/9, i%9)
+                cell.isStartingCell = true
+            }
+        }
+        cellsLiveData.postValue(board.cells)
+    }
+
+    fun vivodSt(cellSt: String){
+        for (i in 0..80){
+            val cell = board.getCell(i/9, i%9)
+            cell.value = cellSt[i].toString().toInt()
+        }
+        cellsLiveData.postValue(board.cells)
+    }
+
     fun valid(n: Int, r: Int, c: Int): Boolean{
         for(i in 0..8){
             val cell = board.getCell(r, i)
@@ -177,11 +217,21 @@ class SudokuGame {
         cellsLiveData.postValue(board.cells)
     }
 
-    fun done(){
+    fun done() {
+        for (i in 0..80) {
+            val cell = board.getCell(i / 9, i % 9)
+            if (cell.value != 0) {
+                cell.isStartingCell = true
+            }
+        }
+        cellsLiveData.postValue(board.cells)
+    }
+
+    fun undo(){
         for(i in 0..80){
             val cell = board.getCell(i/9,i%9)
-            if (cell.value!=0){
-                board.cells[i].isStartingCell = true
+            if (cell.isStartingCell){
+                cell.isStartingCell=false
             }
         }
         cellsLiveData.postValue(board.cells)

@@ -1,6 +1,9 @@
 package com.example.sudoku.view
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -16,6 +19,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
     private lateinit var viewModel: playSudokuViewmodel
+    var cellSt: String = ""
+    var cellStart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,21 +32,34 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         viewModel.sudokuGame.selectedCellLiveData.observe(this, Observer { updateSelectedCellUI(it) })
         viewModel.sudokuGame.cellsLiveData.observe(this, Observer { updateCells(it) })
 
-        viewModel.sudokuGame.cleaner()
-        viewModel.sudokuGame.generate()
         val intent = intent
         when {
             intent.getStringExtra("dif")=="1" -> {
+                viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleaneasy()
                 Toast.makeText(this, "Easy sudoku genearated", Toast.LENGTH_SHORT).show()
             }
             intent.getStringExtra("dif")=="2" -> {
+                viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleanmid()
                 Toast.makeText(this, "Normal sudoku genearated", Toast.LENGTH_SHORT).show()
             }
             intent.getStringExtra("dif")=="3" -> {
+                viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleanhard()
                 Toast.makeText(this, "Hard sudoku genearated", Toast.LENGTH_SHORT).show()
+            }
+            intent.getStringExtra("dif")=="4" -> {
+                loadGame()
+                if (cellSt != "") {
+                    viewModel.sudokuGame.vivodSt(cellSt)
+                }
+                if (cellStart != ""){
+                    viewModel.sudokuGame.vivodStart(cellStart)
+                }
+                viewModel.sudokuGame.check()
+                viewModel.sudokuGame.vivod()
+                Toast.makeText(this, "Last sudoku loaded", Toast.LENGTH_SHORT).show()
             }
         }
         viewModel.sudokuGame.vivod()
@@ -57,6 +75,11 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
         buttonDel.setOnClickListener{viewModel.sudokuGame.delete()
             viewModel.sudokuGame.check()}
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        saveGame()
     }
 
     fun addDialog(v: View){
@@ -83,6 +106,21 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         alert.create().show()
     }
 
+    private fun saveGame(){
+        var sPref: SharedPreferences = getPreferences(MODE_PRIVATE)
+        val ed: SharedPreferences.Editor = sPref.edit()
+        val toput: String = viewModel.sudokuGame.vvodSt()
+        ed.putString("genCells", toput)
+        ed.putString("genStart", viewModel.sudokuGame.vvodStart())
+        ed.commit()
+    }
+
+    private fun loadGame(){
+        var sPref: SharedPreferences = getPreferences(MODE_PRIVATE)
+        cellSt = sPref.getString("genCells", "").toString()
+        cellStart = sPref.getString("genStart", "").toString()
+    }
+
     private fun updateCells(cells: List<Cell>?) = cells?.let {
         BoardView.updateCells(cells)
     }
@@ -93,5 +131,20 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row,col)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.gen_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.save -> {
+                saveGame()
+                Toast.makeText(this, "Sudoku saved", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

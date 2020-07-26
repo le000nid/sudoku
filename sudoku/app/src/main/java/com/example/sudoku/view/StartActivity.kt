@@ -31,6 +31,9 @@ class StartActivity : AppCompatActivity() {
         buttonGen3.setOnClickListener{
             hardsud()
         }
+        lastGame.setOnClickListener{
+            lastsud()
+        }
         ButtonScan.setOnClickListener{
             recogsud()
         }
@@ -64,6 +67,11 @@ class StartActivity : AppCompatActivity() {
     fun hardsud(){
         val intent = Intent(this, GenActivity::class.java)
         intent.putExtra("dif", "3")
+        startActivity(intent)
+    }
+    fun lastsud(){
+        val intent = Intent(this, GenActivity::class.java)
+        intent.putExtra("dif", "4")
         startActivity(intent)
     }
     fun recogsud(){
