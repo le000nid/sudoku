@@ -1,5 +1,6 @@
 package com.example.sudoku.view
 
+import SudokuSolverBoard
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
@@ -70,27 +71,28 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
         saveGame()
     }
 
+    override fun onPause() {
+        super.onPause()
+        saveGame()
+    }
+
     fun addDialog(v: View){
         var alert = AlertDialog.Builder(this)
         alert.setTitle("Hint")
         alert.setMessage("Are you sure you want a hint?")
         alert.setPositiveButton("Yes"
         ) { dialog, id ->
-            val cell = viewModel.sudokuGame.board.getCell(viewModel.sudokuGame.selectedRow, viewModel.sudokuGame.selectedCol)
-            if (viewModel.sudokuGame.noerr()){
-                viewModel.sudokuGame.solveOne()
+            if (viewModel.sudokuGame.noerr() && viewModel.sudokuGame.selectedRow>=0){
+                viewModel.sudokuGame.SolveOne(this)
                 viewModel.sudokuGame.vivod()
-            }
-            if (!viewModel.sudokuGame.noerr()){
+            } else if (!viewModel.sudokuGame.noerr()){
                 Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
-            } else if (cell.value==0){
-                Toast.makeText(this, "There are no solution for this sudoku", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Select cell", Toast.LENGTH_SHORT).show()
             }
         }
         alert.setNegativeButton("Cancel"
-        ) { dialog, id ->
-            Toast.makeText(this, "Hint was canceled", Toast.LENGTH_SHORT).show()
-        }
+        ) { dialog, id -> }
         alert.create().show()
     }
 
@@ -137,18 +139,16 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                     Toast.makeText(this, "Cleaned", Toast.LENGTH_SHORT).show()
                 }
                 alert.setNegativeButton("Cancel"
-                ) { dialog, id ->
-                }
+                ) { dialog, id -> }
                 alert.create().show()
             }
             R.id.done -> {
                 var alert = AlertDialog.Builder(this)
                 alert.setTitle("Done")
                 alert.setMessage("Do cells unchangeable?")
-                alert.setPositiveButton("Yes"
-                        ) { dialog, id ->
+                alert.setPositiveButton("Yes") { dialog, id ->
                     if (viewModel.sudokuGame.noerr()) {
-                        viewModel.sudokuGame.done()
+                        viewModel.sudokuGame.done(this)
                         viewModel.sudokuGame.selectedCellLiveData.postValue(Pair(-1, -1))
                         Toast.makeText(this, "Cells are unchangeable", Toast.LENGTH_SHORT).show()
                     }
@@ -156,9 +156,8 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                         Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
                     }
                 }
-                alert.setNeutralButton("Do changeable"
-                ) { dialog, id ->
-                    viewModel.sudokuGame.undo()
+                alert.setNeutralButton("Do changeable") { dialog, id ->
+                    viewModel.sudokuGame.undone()
                     Toast.makeText(this, "Cells are changeable", Toast.LENGTH_SHORT).show()
                 }
                 alert.setNegativeButton("Cancel") { dialog, id -> }
@@ -168,22 +167,16 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 var alert = AlertDialog.Builder(this)
                 alert.setTitle("Solve")
                 alert.setMessage("Solve sudoku?")
-                alert.setPositiveButton("Yes"
-                ) { dialog, id ->
+                alert.setPositiveButton("Yes") { dialog, id ->
                     if (viewModel.sudokuGame.noerr()){
-                        viewModel.sudokuGame.solver()
+                        viewModel.sudokuGame.Solver(this)
                         viewModel.sudokuGame.vivod()
-                        if(viewModel.sudokuGame.empcheck()){
-                            Toast.makeText(this, "There are no solution for this sudoku", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    else{
+                    } else {
                         Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
                     }
                 }
                 alert.setNegativeButton("Cancel"
-                ) { dialog, id ->
-                }
+                ) { dialog, id -> }
                 alert.create().show()
             }
             R.id.save -> {

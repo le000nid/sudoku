@@ -1,7 +1,9 @@
 package com.example.sudoku.view
 
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,13 +17,20 @@ import com.example.sudoku.game.Cell
 import com.example.sudoku.view.custom.BoardView
 import com.example.sudoku.viewmodel.playSudokuViewmodel
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
 
     private lateinit var viewModel: playSudokuViewmodel
     var cellSt: String = ""
     var cellStart: String = ""
-
+    val timerHint = object: CountDownTimer(30000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {}
+        override fun onFinish() {
+            buttonAdd.isClickable = true
+            Toast.makeText(this@GenActivity, "Hint is enabled", Toast.LENGTH_SHORT).show()
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -58,7 +67,6 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                     viewModel.sudokuGame.vivodStart(cellStart)
                 }
                 viewModel.sudokuGame.check()
-                viewModel.sudokuGame.vivod()
                 Toast.makeText(this, "Last sudoku loaded", Toast.LENGTH_SHORT).show()
             }
         }
@@ -77,32 +85,34 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             viewModel.sudokuGame.check()}
     }
 
+    override fun onPause() {
+        super.onPause()
+        saveGame()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         saveGame()
+        timerHint.cancel()
     }
 
     fun addDialog(v: View){
         var alert = AlertDialog.Builder(this)
         alert.setTitle("Hint")
         alert.setMessage("Are you sure you want a hint?")
-        alert.setPositiveButton("Yes"
-        ) { dialog, id ->
-            val cell = viewModel.sudokuGame.board.getCell(viewModel.sudokuGame.selectedRow, viewModel.sudokuGame.selectedCol)
+        alert.setPositiveButton("Yes") { dialog, id ->
             if (viewModel.sudokuGame.noerr()){
-                viewModel.sudokuGame.solveOne()
+                viewModel.sudokuGame.SolveOne(this)
                 viewModel.sudokuGame.vivod()
+                timerHint.start()
+                buttonAdd.isClickable = false
+                Toast.makeText(this, "Hint is disabled for 30 seconds", Toast.LENGTH_SHORT).show()
             }
             if (!viewModel.sudokuGame.noerr()){
-                Toast.makeText(this, "there are mistakes in sudoku", Toast.LENGTH_SHORT).show()
-            } else if (cell.value==0){
-                Toast.makeText(this, "there are no solution for this sudoku", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
             }
         }
-        alert.setNegativeButton("Cancel"
-        ) { dialog, id ->
-            Toast.makeText(this, "Hint was canceled", Toast.LENGTH_SHORT).show()
-        }
+        alert.setNegativeButton("Cancel") { dialog, id -> }
         alert.create().show()
     }
 

@@ -1,10 +1,11 @@
 package com.example.sudoku.game
 
-import android.graphics.Canvas
+import SudokuSolverBoard
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
-import com.example.sudoku.view.custom.BoardView
-import kotlin.math.log
 
 class SudokuGame {
     var selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
@@ -14,6 +15,8 @@ class SudokuGame {
     var selectedCol = -1
 
     val board: Board
+
+    val sudokuSolverBoard = SudokuSolverBoard()
 
     init {
         val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, 0) }
@@ -144,66 +147,42 @@ class SudokuGame {
         return true
     }
 
-    fun solver(): Boolean{
-        var empty: Boolean = false
-        var emptyR: Int = 0
-        var emptyC: Int = 0
-        for(r in 0..8){
+    fun Solver(context: Context){
+        for (r in 0..8){
             for (c in 0..8){
-                val cell = board.getCell(r, c)
-                if (cell.value == 0){
-                    empty = true
-                    emptyR = cell.row
-                    emptyC = cell.col
-                    break
+                val cell = board.getCell(r,c)
+                sudokuSolverBoard._values[r][c] = cell.value
+            }
+        }
+        if (sudokuSolverBoard.Solve()){
+            for (r in 0..8){
+                for (c in 0..8){
+                    val cell = board.getCell(r,c)
+                    cell.value = sudokuSolverBoard._values[r][c]
                 }
             }
-            if (empty){
-                break
-            }
+            Toast.makeText(context, "Sudoku solved", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "There are no solution for this sudoku", Toast.LENGTH_SHORT).show()
         }
-        if (!empty){
-            return true
-        }
-        else{
-            for(i in 1..9){
-                if (valid(i, emptyR ,emptyC)){
-                    val cell = board.getCell(emptyR, emptyC)
-                    cell.value=i
-                    if(solver()){
-                        return true
-                    }
-                    else{
-                        cell.value = 0
-                    }
-                }
-
-            }
-        }
-        return false
     }
 
     fun vivod(){
         cellsLiveData.postValue(board.cells)
     }
 
-    fun solveOne(){
-        val l: List<Int> = emptyList()
-        var ml = l.toMutableList()
-        for(i in 0..8){
-            for(j in 0..8){
-                val cell = board.getCell(i, j)
-                ml.add(cell.value)
+    fun SolveOne(context: Context){
+        for (r in 0..8){
+            for (c in 0..8){
+                val cell = board.getCell(r,c)
+                sudokuSolverBoard._values[r][c] = cell.value
             }
         }
-        solver()
-        for(i in 0..80){
-            val cell = board.getCell(i/9, i%9)
-            if (i/9 == selectedRow && i%9 == selectedCol){
-                println("good")
-            } else {
-                cell.value = ml[i]
-            }
+        if (sudokuSolverBoard.Solve()){
+            val cell = board.getCell(selectedRow,selectedCol)
+            cell.value = sudokuSolverBoard._values[selectedRow][selectedCol]
+        } else {
+            Toast.makeText(context, "There are no solution for this sudoku", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -217,17 +196,26 @@ class SudokuGame {
         cellsLiveData.postValue(board.cells)
     }
 
-    fun done() {
-        for (i in 0..80) {
-            val cell = board.getCell(i / 9, i % 9)
-            if (cell.value != 0) {
-                cell.isStartingCell = true
+    fun done(context: Context) {
+        for (r in 0..8){
+            for (c in 0..8){
+                val cell = board.getCell(r,c)
+                sudokuSolverBoard._values[r][c] = cell.value
             }
         }
-        cellsLiveData.postValue(board.cells)
+        if (sudokuSolverBoard.Solve()){
+            for (i in 0..80) {
+                val cell = board.getCell(i / 9, i % 9)
+                if (cell.value != 0) {
+                    cell.isStartingCell = true
+                }
+            }
+        } else {
+            Toast.makeText(context, "There are no solution for this sudoku", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    fun undo(){
+    fun undone(){
         for(i in 0..80){
             val cell = board.getCell(i/9,i%9)
             if (cell.isStartingCell){
