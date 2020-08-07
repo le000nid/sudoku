@@ -1,7 +1,9 @@
 package com.example.sudoku.view
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
@@ -15,9 +17,17 @@ import kotlinx.android.synthetic.main.activity_start.*
 
 class StartActivity : AppCompatActivity() {
     private val PERMISSION_CODE = 100
+    var cellSt: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
+
+        var sPref: SharedPreferences = getSharedPreferences("genPrefs", MODE_PRIVATE)
+        cellSt = sPref.getString("genCells", "").toString()
+        if (cellSt == ""){
+            lastGame.alpha = 0.3F
+            lastGame.isEnabled = false
+        }
 
         buttonOwn.setOnClickListener{
             ownsud()
@@ -40,6 +50,12 @@ class StartActivity : AppCompatActivity() {
         checkPerm(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, PERMISSION_CODE)
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        finish()
+        startActivity(intent)
+    }
+
     private fun checkPerm(permission: String, permission2: String, requestCode: Int) {
         if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_DENIED && ContextCompat.checkSelfPermission(this, permission2) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this, arrayOf(permission, permission2), requestCode)
@@ -50,7 +66,7 @@ class StartActivity : AppCompatActivity() {
         }
     }
 
-    fun ownsud() {
+    private fun ownsud() {
         val intent = Intent(this, OwnActivity::class.java)
         startActivity(intent)
     }

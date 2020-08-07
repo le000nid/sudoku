@@ -50,13 +50,13 @@ class BoardView(context: Context, attributeSet: AttributeSet) : View(context, at
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 29F
+        textSize = 32F
     }
 
     private val startingCellTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 29F
+        textSize = 32F
     }
 
     private val startingCellPaint = Paint().apply {

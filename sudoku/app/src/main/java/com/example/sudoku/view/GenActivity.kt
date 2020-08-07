@@ -28,6 +28,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         override fun onTick(millisUntilFinished: Long) {}
         override fun onFinish() {
             buttonAdd.isClickable = true
+            buttonAdd.alpha = 1F
             Toast.makeText(this@GenActivity, "Hint is enabled", Toast.LENGTH_SHORT).show()
         }
     }
@@ -106,6 +107,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 viewModel.sudokuGame.vivod()
                 timerHint.start()
                 buttonAdd.isClickable = false
+                buttonAdd.alpha = 0.3F
                 Toast.makeText(this, "Hint is disabled for 30 seconds", Toast.LENGTH_SHORT).show()
             }
             if (!viewModel.sudokuGame.noerr()){
@@ -117,7 +119,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
     }
 
     private fun saveGame(){
-        var sPref: SharedPreferences = getPreferences(MODE_PRIVATE)
+        var sPref: SharedPreferences = getSharedPreferences("genPrefs", MODE_PRIVATE)
         val ed: SharedPreferences.Editor = sPref.edit()
         val toput: String = viewModel.sudokuGame.vvodSt()
         ed.putString("genCells", toput)
@@ -126,7 +128,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
     }
 
     private fun loadGame(){
-        var sPref: SharedPreferences = getPreferences(MODE_PRIVATE)
+        var sPref: SharedPreferences = getSharedPreferences("genPrefs", MODE_PRIVATE)
         cellSt = sPref.getString("genCells", "").toString()
         cellStart = sPref.getString("genStart", "").toString()
     }
