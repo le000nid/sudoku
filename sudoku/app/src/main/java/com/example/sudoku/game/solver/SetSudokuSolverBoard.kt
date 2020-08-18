@@ -2,7 +2,7 @@ import java.util.ArrayList
 
 class SudokuSolverBoard {
     val _values = Array(9) {IntArray(9) {0} }
-    private val _restrictions = Array(9) { arrayOfNulls<IRestriction>(9) }
+    val _restrictions = Array(9) { arrayOfNulls<IRestriction>(9) }
     private val _columnRestrictions = arrayOfNulls<BitRestriction>(9)
     private val _rawRestrictions = arrayOfNulls<BitRestriction>(9)
     private val _squareRestrictions = arrayOfNulls<BitRestriction>(9)
@@ -77,5 +77,20 @@ class SudokuSolverBoard {
     }
     fun setValue(r: Int, c: Int, Digit: Int){
         _values[r][c]=Digit
+    }
+    fun fillRestr(){
+        for (i in 0..8) {
+            _columnRestrictions[i]!!.Clear()
+            _rawRestrictions[i]!!.Clear()
+            _squareRestrictions[i]!!.Clear()
+        }
+        for (r in 0..8) {
+            for (c in 0..8)
+            {
+                if (_values[r][c] != 0){
+                    _restrictions[r][c]!!.Remove(_values[r][c])
+                }
+            }
+        }
     }
 }

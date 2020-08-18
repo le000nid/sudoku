@@ -1,12 +1,10 @@
 package com.example.sudoku.view
 
-import SudokuSolverBoard
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -77,18 +75,20 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
     }
 
     fun addDialog(v: View){
-        var alert = AlertDialog.Builder(this)
+        val alert = AlertDialog.Builder(this)
         alert.setTitle("Hint")
         alert.setMessage("Are you sure you want a hint?")
         alert.setPositiveButton("Yes"
         ) { dialog, id ->
-            if (viewModel.sudokuGame.noerr() && viewModel.sudokuGame.selectedRow>=0){
+            if (!viewModel.sudokuGame.noerr()) {
+                Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
+            } else if (viewModel.sudokuGame.selectedRow<0){
+                Toast.makeText(this, "Select empty cell", Toast.LENGTH_SHORT).show()
+            } else if (viewModel.sudokuGame.board.getCell(viewModel.sudokuGame.selectedRow, viewModel.sudokuGame.selectedCol).value != 0){
+                Toast.makeText(this, "Select empty cell", Toast.LENGTH_SHORT).show()
+            } else {
                 viewModel.sudokuGame.SolveOne(this)
                 viewModel.sudokuGame.vivod()
-            } else if (!viewModel.sudokuGame.noerr()){
-                Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Select cell", Toast.LENGTH_SHORT).show()
             }
         }
         alert.setNegativeButton("Cancel"
@@ -97,7 +97,7 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
     }
 
     private fun saveGame(){
-        var sPref: SharedPreferences = getPreferences(MODE_PRIVATE)
+        val sPref: SharedPreferences = getPreferences(MODE_PRIVATE)
         val ed: SharedPreferences.Editor = sPref.edit()
         ed.putString("cells", viewModel.sudokuGame.vvodSt())
         ed.putString("Start", viewModel.sudokuGame.vvodStart())
@@ -130,7 +130,7 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.clean -> {
-                var alert = AlertDialog.Builder(this)
+                val alert = AlertDialog.Builder(this)
                 alert.setTitle("Erase")
                 alert.setMessage("Erase sudoku?")
                 alert.setPositiveButton("Yes"
@@ -143,7 +143,7 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 alert.create().show()
             }
             R.id.done -> {
-                var alert = AlertDialog.Builder(this)
+                val alert = AlertDialog.Builder(this)
                 alert.setTitle("Done")
                 alert.setMessage("Do cells unchangeable?")
                 alert.setPositiveButton("Yes") { dialog, id ->
@@ -164,7 +164,7 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 alert.create().show()
             }
             R.id.doo -> {
-                var alert = AlertDialog.Builder(this)
+                val alert = AlertDialog.Builder(this)
                 alert.setTitle("Solve")
                 alert.setMessage("Solve sudoku?")
                 alert.setPositiveButton("Yes") { dialog, id ->

@@ -47,6 +47,9 @@ class StartActivity : AppCompatActivity() {
         ButtonScan.setOnClickListener{
             recogsud()
         }
+        EasyGame.setOnClickListener {
+            seasysud()
+        }
         checkPerm(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, PERMISSION_CODE)
     }
 
@@ -83,6 +86,11 @@ class StartActivity : AppCompatActivity() {
     fun hardsud(){
         val intent = Intent(this, GenActivity::class.java)
         intent.putExtra("dif", "3")
+        startActivity(intent)
+    }
+    fun seasysud(){
+        val intent = Intent(this, GenActivity::class.java)
+        intent.putExtra("dif", "5")
         startActivity(intent)
     }
     fun lastsud(){

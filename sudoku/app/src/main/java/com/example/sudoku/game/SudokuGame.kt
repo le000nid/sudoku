@@ -1,5 +1,6 @@
 package com.example.sudoku.game
 
+import BitListRestriction
 import SudokuSolverBoard
 import android.content.Context
 import android.util.Log
@@ -167,6 +168,26 @@ class SudokuGame {
         }
     }
 
+    fun easyMod(){
+        for (r in 0..8) {
+            for (c in 0..8) {
+                val cell = board.getCell(r, c)
+                sudokuSolverBoard._values[r][c] = cell.value
+            }
+        }
+        sudokuSolverBoard.fillRestr()
+        for (r in 0..8){
+            for (c in 0..8){
+                val cell = board.getCell(r,c)
+                if (cell.value == 0){
+                    val curRestriction = sudokuSolverBoard._restrictions[r][c]
+                    val freeCount = curRestriction!!.GetFreeDigits()
+                    cell.notes = freeCount.toMutableSet()
+                }
+            }
+        }
+    }
+
     fun vivod(){
         cellsLiveData.postValue(board.cells)
     }
@@ -193,7 +214,7 @@ class SudokuGame {
             board.cells[i].isStartingCell=false
             board.cells[i].isErrCell=false
         }
-        cellsLiveData.postValue(board.cells)
+        vivod()
     }
 
     fun done(context: Context) {
@@ -222,7 +243,7 @@ class SudokuGame {
                 cell.isStartingCell=false
             }
         }
-        cellsLiveData.postValue(board.cells)
+        vivod()
     }
 
     fun generate(): Boolean{
@@ -308,16 +329,15 @@ class SudokuGame {
             board.cells[l[i]].isStartingCell=false
         }
     }
-
-    fun empcheck(): Boolean{
-        for(r in 0..8){
+    fun isWin(): Boolean{
+        for (r in 0..8){
             for (c in 0..8){
                 val cell = board.getCell(r, c)
-                if (cell.value == 0){
-                    return true
+                if (cell.value == 0 || cell.isErrCell){
+                    return false
                 }
             }
         }
-        return false
+        return true
     }
 }
