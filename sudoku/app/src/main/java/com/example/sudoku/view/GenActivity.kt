@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import android.widget.Toast.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -31,11 +32,11 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         override fun onFinish() {
             buttonAdd.isClickable = true
             buttonAdd.alpha = 1F
-            Toast.makeText(this@GenActivity, "Hint is enabled", Toast.LENGTH_SHORT).show()
+            makeText(this@GenActivity, "Hint is enabled", LENGTH_SHORT).show()
         }
     }
-    var start = Date(0)
-    var timesec: Long = 0
+    private var start = Date(0)
+    private var timesec: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,19 +54,19 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleaneasy()
                 intendDif = "1"
-                Toast.makeText(this, "Easy sudoku genearated", Toast.LENGTH_SHORT).show()
+                makeText(this, "Easy sudoku genearated", LENGTH_SHORT).show()
             }
             intent.getStringExtra("dif")=="2" -> {
                 viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleanmid()
                 intendDif = "2"
-                Toast.makeText(this, "Normal sudoku genearated", Toast.LENGTH_SHORT).show()
+                makeText(this, "Normal sudoku genearated", LENGTH_SHORT).show()
             }
             intent.getStringExtra("dif")=="3" -> {
                 viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleanhard()
                 intendDif = "3"
-                Toast.makeText(this, "Hard sudoku genearated", Toast.LENGTH_SHORT).show()
+                makeText(this, "Hard sudoku genearated", LENGTH_SHORT).show()
             }
             intent.getStringExtra("dif")=="4" -> {
                 loadGame()
@@ -75,22 +76,26 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 if (cellStart != ""){
                     viewModel.sudokuGame.vivodStart(cellStart)
                 }
+                if (intendDif == "5"){
+                    viewModel.sudokuGame.easyMod()
+                }
                 viewModel.sudokuGame.check()
-                Toast.makeText(this, "Last sudoku loaded", Toast.LENGTH_SHORT).show()
+                makeText(this, "Last sudoku loaded", LENGTH_SHORT).show()
             }
             intent.getStringExtra("dif")=="5" -> {
                 viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleanmid()
                 viewModel.sudokuGame.easyMod()
+                viewModel.sudokuGame.vivod()
                 intendDif = "5"
-                Toast.makeText(this, "Super easy sudoku genearated", Toast.LENGTH_SHORT).show()
+                makeText(this, "Super easy sudoku genearated", LENGTH_SHORT).show()
             }
         }
         viewModel.sudokuGame.vivod()
 
         val buttons = listOf(button1, button2, button3, button4, button5, button6, button7, button8, button9)
 
-//        start = Date(System.currentTimeMillis())
+        start = Date(System.currentTimeMillis())
 
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
@@ -98,11 +103,9 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 if (intendDif == "5"){
                     viewModel.sudokuGame.easyMod()
                 }
-//                if (!won && viewModel.sudokuGame.isWin()){
-//                    timesec = (Date(System.currentTimeMillis()).time - start.time)/1000
-//                    won = true
-//                    Toast.makeText(this, "You won, your time is $timesec", Toast.LENGTH_SHORT).show()
-//                }
+                if (!won && viewModel.sudokuGame.isWin()){
+                    recordCheck()
+                }
                 viewModel.sudokuGame.check()
             }
         }
@@ -113,6 +116,14 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 viewModel.sudokuGame.easyMod()
             }
             viewModel.sudokuGame.check()
+        }
+        buttontest.setOnClickListener {
+            if (viewModel.sudokuGame.noerr()){
+                viewModel.sudokuGame.Solver(this)
+                viewModel.sudokuGame.vivod()
+            } else {
+                makeText(this, "There are mistakes in sudoku", LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -127,17 +138,77 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         timerHint.cancel()
     }
 
+    fun recordCheck(){
+        val sPref: SharedPreferences = getSharedPreferences("genPrefs", MODE_PRIVATE)
+        timesec = if (timesec == 0) {
+            ((Date(System.currentTimeMillis()).time - start.time).toInt())/1000
+        } else {
+            ((Date(System.currentTimeMillis()).time - start.time).toInt())/1000+sPref.getInt("time", 0)
+        }
+        var record = false
+        val min = timesec/60
+        val sec = timesec%60
+        val ed: SharedPreferences.Editor = sPref.edit()
+        if (intendDif == "1") {
+            val rec = sPref.getInt("rectime1", 0)
+            val wins = sPref.getInt("wins1", 0)
+            ed.putInt("wins1", wins+1)
+            if (rec > timesec || rec == 0) {
+                ed.putInt("rectime1", timesec)
+                record = true
+                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
+            }
+        } else if (intendDif == "2") {
+            val rec = sPref.getInt("rectime2", 0)
+            val wins = sPref.getInt("wins2", 0)
+            ed.putInt("wins2", wins+1)
+            if (rec > timesec || rec == 0) {
+                ed.putInt("rectime2", timesec)
+                record = true
+                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
+            }
+        } else if (intendDif == "3") {
+            val rec = sPref.getInt("rectime3", 0)
+            val wins = sPref.getInt("wins3", 0)
+            ed.putInt("wins3", wins+1)
+            if (rec > timesec || rec == 0) {
+                ed.putInt("rectime3", timesec)
+                record = true
+                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
+            }
+        } else if (intendDif == "5") {
+            val rec = sPref.getInt("rectime5", 0)
+            val wins = sPref.getInt("wins5", 0)
+            ed.putInt("wins5", wins+1)
+            if (rec > timesec || rec == 0) {
+                ed.putInt("rectime5", timesec)
+                record = true
+                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
+            }
+        }
+        if (record){
+            makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
+        } else {
+            makeText(this, "You won with time $min.$sec", LENGTH_SHORT).show()
+        }
+
+        won = true
+        makeText(this, "You won, your time is $timesec", LENGTH_SHORT).show()
+        ed.putInt("time", 0)
+        ed.putString("genCells", "")
+        ed.putString("genStart", "")
+        ed.apply()
+    }
+
     fun addDialog(v: View){
         val alert = AlertDialog.Builder(this)
         alert.setTitle("Hint")
         alert.setMessage("Are you sure you want a hint?")
         alert.setPositiveButton("Yes") { dialog, id ->
             if (!viewModel.sudokuGame.noerr()) {
-                Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
-            } else if (viewModel.sudokuGame.selectedRow<0){
-                Toast.makeText(this, "Select empty cell", Toast.LENGTH_SHORT).show()
-            } else if (viewModel.sudokuGame.board.getCell(viewModel.sudokuGame.selectedRow, viewModel.sudokuGame.selectedCol).value != 0){
-                Toast.makeText(this, "Select empty cell", Toast.LENGTH_SHORT).show()
+                makeText(this, "There are mistakes in sudoku", LENGTH_SHORT).show()
+            } else if (viewModel.sudokuGame.selectedRow<0 || viewModel.sudokuGame.board.getCell(viewModel.sudokuGame.selectedRow, viewModel.sudokuGame.selectedCol).value != 0){
+                makeText(this, "Select empty cell", LENGTH_SHORT).show()
             } else {
                 viewModel.sudokuGame.SolveOne(this)
                 viewModel.sudokuGame.vivod()
@@ -147,13 +218,11 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 if (intendDif == "5"){
                     viewModel.sudokuGame.easyMod()
                 }
-//                if (!won && viewModel.sudokuGame.isWin()){
-//                    timesec = (Date(System.currentTimeMillis()).time - start.time)/1000
-//                    won = true
-//                    Toast.makeText(this, "You won, your time is $timesec", Toast.LENGTH_SHORT).show()
-//                } else {
-                    Toast.makeText(this, "Hint is disabled for 30 seconds", Toast.LENGTH_SHORT).show()
-//                }
+                if (!won && viewModel.sudokuGame.isWin()){
+                    recordCheck()
+                } else {
+                    makeText(this, "Hint is disabled for 30 seconds", LENGTH_SHORT).show()
+                }
             }
         }
         alert.setNegativeButton("Cancel") { dialog, id -> }
@@ -161,13 +230,21 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
     }
 
     private fun saveGame(){
-        val sPref: SharedPreferences = getSharedPreferences("genPrefs", MODE_PRIVATE)
-        val ed: SharedPreferences.Editor = sPref.edit()
-        val toput: String = viewModel.sudokuGame.vvodSt()
-        ed.putString("genCells", toput)
-        ed.putString("genStart", viewModel.sudokuGame.vvodStart())
-        ed.putString("genDif", intendDif)
-        ed.commit()
+        if(!won) {
+            val sPref: SharedPreferences = getSharedPreferences("genPrefs", MODE_PRIVATE)
+            val ed: SharedPreferences.Editor = sPref.edit()
+            val toput: String = viewModel.sudokuGame.vvodSt()
+            ed.putString("genCells", toput)
+            ed.putString("genStart", viewModel.sudokuGame.vvodStart())
+            ed.putString("genDif", intendDif)
+            timesec = if (timesec == 0) {
+                ((Date(System.currentTimeMillis()).time - start.time).toInt())/1000
+            } else {
+                ((Date(System.currentTimeMillis()).time - start.time).toInt())/1000+sPref.getInt("time", 0)
+            }
+            ed.putInt("time", timesec)
+            ed.apply()
+        }
     }
 
     private fun loadGame(){
@@ -175,6 +252,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         cellSt = sPref.getString("genCells", "").toString()
         cellStart = sPref.getString("genStart", "").toString()
         intendDif = sPref.getString("genDif", "").toString()
+        timesec = sPref.getInt("time", 0)
     }
 
     private fun updateCells(cells: List<Cell>?) = cells?.let {
@@ -198,7 +276,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         when(item.itemId){
             R.id.save -> {
                 saveGame()
-                Toast.makeText(this, "Sudoku saved", Toast.LENGTH_SHORT).show()
+                makeText(this, "Sudoku saved", LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)

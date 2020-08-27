@@ -81,14 +81,14 @@ public class PortraitCameraView extends CameraBridgeViewBase implements Camera.P
 
             if (mCamera == null) return false;
 
-        /* Now set camera parameters */
+            /* Now set camera parameters */
             try {
                 Camera.Parameters params = mCamera.getParameters();
                 Log.d(TAG, "getSupportedPreviewSizes()");
                 List<Camera.Size> sizes = params.getSupportedPreviewSizes();
 
                 if (sizes != null) {
-                /* Select the size that fits surface considering maximum size allowed */
+                    /* Select the size that fits surface considering maximum size allowed */
                     Size frameSize = calculateCameraFrameSize(sizes, new JavaCameraSizeAccessor(), height, width); //use turn around values here to get the correct prev size for portrait mode
 
                     params.setPreviewFormat(ImageFormat.NV21);
@@ -144,7 +144,7 @@ public class PortraitCameraView extends CameraBridgeViewBase implements Camera.P
                     } else
                         mCamera.setPreviewDisplay(null);
 
-                /* Finally we are ready to start the preview */
+                    /* Finally we are ready to start the preview */
                     Log.d(TAG, "startPreview");
                     mCamera.startPreview();
                 } else
@@ -181,15 +181,15 @@ public class PortraitCameraView extends CameraBridgeViewBase implements Camera.P
     @Override
     protected boolean connectCamera(int width, int height) {
 
-    /* 1. We need to instantiate camera
-     * 2. We need to start thread which will be getting frames
-     */
-    /* First step - initialize camera connection */
+        /* 1. We need to instantiate camera
+         * 2. We need to start thread which will be getting frames
+         */
+        /* First step - initialize camera connection */
         Log.d(TAG, "Connecting to camera");
         if (!initializeCamera(width, height))
             return false;
 
-    /* now we can start update thread */
+        /* now we can start update thread */
         Log.d(TAG, "Starting processing thread");
         mStopThread = false;
         mThread = new Thread(new CameraWorker());
@@ -199,9 +199,9 @@ public class PortraitCameraView extends CameraBridgeViewBase implements Camera.P
     }
 
     protected void disconnectCamera() {
-    /* 1. We need to stop thread which updating the frames
-     * 2. Stop camera and release it
-     */
+        /* 1. We need to stop thread which updating the frames
+         * 2. Stop camera and release it
+         */
         Log.d(TAG, "Disconnecting from camera");
         try {
             mStopThread = true;
@@ -218,7 +218,7 @@ public class PortraitCameraView extends CameraBridgeViewBase implements Camera.P
             mThread = null;
         }
 
-    /* Now release camera */
+        /* Now release camera */
         releaseCamera();
     }
 
