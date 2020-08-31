@@ -117,14 +117,6 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             }
             viewModel.sudokuGame.check()
         }
-        buttontest.setOnClickListener {
-            if (viewModel.sudokuGame.noerr()){
-                viewModel.sudokuGame.Solver(this)
-                viewModel.sudokuGame.vivod()
-            } else {
-                makeText(this, "There are mistakes in sudoku", LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun onPause() {
@@ -156,7 +148,6 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             if (rec > timesec || rec == 0) {
                 ed.putInt("rectime1", timesec)
                 record = true
-                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
             }
         } else if (intendDif == "2") {
             val rec = sPref.getInt("rectime2", 0)
@@ -165,7 +156,6 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             if (rec > timesec || rec == 0) {
                 ed.putInt("rectime2", timesec)
                 record = true
-                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
             }
         } else if (intendDif == "3") {
             val rec = sPref.getInt("rectime3", 0)
@@ -174,7 +164,6 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             if (rec > timesec || rec == 0) {
                 ed.putInt("rectime3", timesec)
                 record = true
-                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
             }
         } else if (intendDif == "5") {
             val rec = sPref.getInt("rectime5", 0)
@@ -183,7 +172,6 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             if (rec > timesec || rec == 0) {
                 ed.putInt("rectime5", timesec)
                 record = true
-                makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
             }
         }
         if (record){
@@ -193,7 +181,6 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         }
 
         won = true
-        makeText(this, "You won, your time is $timesec", LENGTH_SHORT).show()
         ed.putInt("time", 0)
         ed.putString("genCells", "")
         ed.putString("genStart", "")
@@ -211,17 +198,19 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 makeText(this, "Select empty cell", LENGTH_SHORT).show()
             } else {
                 viewModel.sudokuGame.SolveOne(this)
-                viewModel.sudokuGame.vivod()
-                timerHint.start()
-                buttonAdd.isClickable = false
-                buttonAdd.alpha = 0.3F
-                if (intendDif == "5"){
-                    viewModel.sudokuGame.easyMod()
-                }
-                if (!won && viewModel.sudokuGame.isWin()){
-                    recordCheck()
-                } else {
-                    makeText(this, "Hint is disabled for 30 seconds", LENGTH_SHORT).show()
+                if(viewModel.sudokuGame.selectedRow<0 || viewModel.sudokuGame.board.getCell(viewModel.sudokuGame.selectedRow, viewModel.sudokuGame.selectedCol).value != 0) {
+                    viewModel.sudokuGame.vivod()
+                    timerHint.start()
+                    buttonAdd.isClickable = false
+                    buttonAdd.alpha = 0.3F
+                    if (intendDif == "5") {
+                        viewModel.sudokuGame.easyMod()
+                    }
+                    if (!won && viewModel.sudokuGame.isWin()) {
+                        recordCheck()
+                    } else {
+                        makeText(this, "Hint is disabled for 30 seconds", LENGTH_SHORT).show()
+                    }
                 }
             }
         }
