@@ -16,7 +16,7 @@
         android:textStyle="italic"
         android:textColor="#00a86b"
         android:textSize="80dp"
-        android:text="Sudoku Solver" />
+        android:text="Magic Sudoku" />
     <Button
         android:id="@+id/buttonOwn"
         android:layout_width="270dp"

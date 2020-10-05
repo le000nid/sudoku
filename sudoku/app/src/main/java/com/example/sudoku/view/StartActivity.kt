@@ -60,8 +60,16 @@ class StartActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        finish()
-        startActivity(intent)
+        var resSt: String = ""
+        var resPref: SharedPreferences = getSharedPreferences("genPrefs", MODE_PRIVATE)
+        resSt = resPref.getString("genCells", "").toString()
+        if (resSt == ""){
+            lastGame.alpha = 0.3F
+            lastGame.isEnabled = false
+        } else {
+            lastGame.alpha = 1F
+            lastGame.isEnabled = true
+        }
     }
 
     private fun checkPerm(permission: String, permission2: String, requestCode: Int) {
