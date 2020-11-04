@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import kotlin.collections.MutableSet as MutableSet
 
 class SudokuGame {
     var selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()
@@ -168,7 +169,7 @@ class SudokuGame {
         }
     }
 
-    fun easyMod(){
+    fun easyModOn(){
         for (r in 0..8) {
             for (c in 0..8) {
                 val cell = board.getCell(r, c)
@@ -183,6 +184,17 @@ class SudokuGame {
                     val curRestriction = sudokuSolverBoard._restrictions[r][c]
                     val freeCount = curRestriction!!.GetFreeDigits()
                     cell.notes = freeCount.toMutableSet()
+                }
+            }
+        }
+    }
+
+    fun easyModOff(){
+        for (r in 0..8){
+            for (c in 0..8){
+                val cell = board.getCell(r,c)
+                if (cell.value == 0){
+                    cell.notes = mutableSetOf()
                 }
             }
         }

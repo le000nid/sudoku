@@ -77,7 +77,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                     viewModel.sudokuGame.vivodStart(cellStart)
                 }
                 if (intendDif == "5"){
-                    viewModel.sudokuGame.easyMod()
+                    viewModel.sudokuGame.easyModOn()
                 }
                 viewModel.sudokuGame.check()
                 makeText(this, "Last sudoku loaded", LENGTH_SHORT).show()
@@ -85,7 +85,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             intent.getStringExtra("dif")=="5" -> {
                 viewModel.sudokuGame.generate()
                 viewModel.sudokuGame.cleanmid()
-                viewModel.sudokuGame.easyMod()
+                viewModel.sudokuGame.easyModOn()
                 viewModel.sudokuGame.vivod()
                 intendDif = "5"
                 makeText(this, "Super easy sudoku genearated", LENGTH_SHORT).show()
@@ -101,7 +101,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             button.setOnClickListener {
                 viewModel.sudokuGame.handleInput(index + 1)
                 if (intendDif == "5"){
-                    viewModel.sudokuGame.easyMod()
+                    viewModel.sudokuGame.easyModOn()
                 }
                 if (!won && viewModel.sudokuGame.isWin()){
                     recordCheck()
@@ -113,7 +113,7 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
         buttonDel.setOnClickListener{
             viewModel.sudokuGame.delete()
             if (intendDif == "5") {
-                viewModel.sudokuGame.easyMod()
+                viewModel.sudokuGame.easyModOn()
             }
             viewModel.sudokuGame.check()
         }
@@ -165,21 +165,14 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 ed.putInt("rectime3", timesec)
                 record = true
             }
-        } else if (intendDif == "5") {
-            val rec = sPref.getInt("rectime5", 0)
-            val wins = sPref.getInt("wins5", 0)
-            ed.putInt("wins5", wins+1)
-            if (rec > timesec || rec == 0) {
-                ed.putInt("rectime5", timesec)
-                record = true
-            }
         }
         if (record){
             makeText(this, "You won and broke your record time with $min.$sec", LENGTH_SHORT).show()
+        } else if(intendDif=="5") {
+            makeText(this, "You won with easy mode on, time is not going to statistic", LENGTH_SHORT).show()
         } else {
             makeText(this, "You won with time $min.$sec", LENGTH_SHORT).show()
         }
-
         won = true
         ed.putInt("time", 0)
         ed.putString("genCells", "")
@@ -200,16 +193,20 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 viewModel.sudokuGame.SolveOne(this)
                 if(viewModel.sudokuGame.selectedRow<0 || viewModel.sudokuGame.board.getCell(viewModel.sudokuGame.selectedRow, viewModel.sudokuGame.selectedCol).value != 0) {
                     viewModel.sudokuGame.vivod()
-                    timerHint.start()
-                    buttonAdd.isClickable = false
-                    buttonAdd.alpha = 0.3F
+                    if (intendDif != "5" && intendDif != "6") {
+                        timerHint.start()
+                        buttonAdd.isClickable = false
+                        buttonAdd.alpha = 0.3F
+                    }
                     if (intendDif == "5") {
-                        viewModel.sudokuGame.easyMod()
+                        viewModel.sudokuGame.easyModOn()
                     }
                     if (!won && viewModel.sudokuGame.isWin()) {
                         recordCheck()
                     } else {
-                        makeText(this, "Hint is disabled for 30 seconds", LENGTH_SHORT).show()
+                        if (intendDif != "5" && intendDif != "6") {
+                            makeText(this, "Hint is disabled for 30 seconds", LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -266,6 +263,33 @@ class GenActivity : AppCompatActivity(), BoardView.OnTouchListener {
             R.id.save -> {
                 saveGame()
                 makeText(this, "Sudoku saved", LENGTH_SHORT).show()
+            }
+            R.id.easy -> {
+                if (intendDif == "5") {
+                    intendDif = "6"
+                    viewModel.sudokuGame.easyModOff()
+                    viewModel.sudokuGame.vivod()
+                } else if(intendDif == "6") {
+                    intendDif = "5"
+                    viewModel.sudokuGame.easyModOn()
+                    viewModel.sudokuGame.vivod()
+                } else {
+                    val alert = AlertDialog.Builder(this)
+                    alert.setTitle("Easy mode")
+                    alert.setMessage("Turn easy mod on?\nThe result will not affect the statistics")
+                    alert.setPositiveButton(
+                        "Yes"
+                    ) { dialog, id ->
+                        intendDif = "5"
+                        viewModel.sudokuGame.easyModOn()
+                        viewModel.sudokuGame.vivod()
+                        Toast.makeText(this, "Easy mod on", Toast.LENGTH_SHORT).show()
+                    }
+                    alert.setNegativeButton(
+                        "Cancel"
+                    ) { dialog, id -> }
+                    alert.create().show()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

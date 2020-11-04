@@ -23,7 +23,7 @@ class StartActivity : AppCompatActivity() {
     private val PERMISSION_CODE = 100
     var cellSt: String = ""
     val cret = arrayOf("✎ Create puzzle","\uD83C\uDFB2 Generate", "\uD83D\uDCF7 Recognize")
-    val gen = arrayOf("Super easy","Easy", "Normal", "Hard")
+    val gen = arrayOf("Easy", "Normal", "Hard")
     val load = arrayOf("✎ Last created sudoku", "\uD83C\uDFB2 Last generated sudoku")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,14 +42,16 @@ class StartActivity : AppCompatActivity() {
                         val buildergen = AlertDialog.Builder(this)
                         buildergen.setTitle("Generate")
                             .setItems(gen) { dialogInterface: DialogInterface, i: Int ->
-                                if(i == 0){
-                                    seasysud()
-                                } else if(i == 1) {
-                                    easysud()
-                                } else if(i == 2){
-                                    midsud()
-                                } else {
-                                    hardsud()
+                                when (i) {
+                                    0 -> {
+                                        easysud()
+                                    }
+                                    1 -> {
+                                        midsud()
+                                    }
+                                    else -> {
+                                        hardsud()
+                                    }
                                 }
                             }
                         buildergen.create().show()
@@ -86,11 +88,9 @@ class StartActivity : AppCompatActivity() {
             val rec1 = sPref.getInt("rectime1", 0)
             val rec2 = sPref.getInt("rectime2", 0)
             val rec3 = sPref.getInt("rectime3", 0)
-            val rec5 = sPref.getInt("rectime5", 0)
             val wins1 = sPref.getInt("wins1", 0)
             val wins2 = sPref.getInt("wins2", 0)
             val wins3 = sPref.getInt("wins3", 0)
-            val wins5 = sPref.getInt("wins5", 0)
             var rec1msg = "--.--"
             if (rec1 != 0) {
                 val min = rec1 / 60
@@ -109,13 +109,7 @@ class StartActivity : AppCompatActivity() {
                 val sec = rec3 % 60
                 rec3msg = "$min min $sec sec"
             }
-            var rec5msg = "--.--"
-            if (rec5 != 0) {
-                val min = rec5 / 60
-                val sec = rec5 % 60
-                rec5msg = "$min min $sec sec"
-            }
-            alert.setMessage("Easy: \nRecord time: $rec1msg\nWins: $wins1\n\nMedium: \nRecord time: $rec2msg\nWins: $wins2\n\nHard: \nRecord time: $rec3msg\nWins: $wins3\n\nSuper easy: \nRecord time: $rec5msg\nWins: $wins5")
+            alert.setMessage("Easy: \nRecord time: $rec1msg\nWins: $wins1\n\nMedium: \nRecord time: $rec2msg\nWins: $wins2\n\nHard: \nRecord time: $rec3msg\nWins: $wins3")
             alert.setPositiveButton("Ok") { dialog, id -> }
             alert.create().show()
         }
@@ -156,11 +150,6 @@ class StartActivity : AppCompatActivity() {
     private fun hardsud(){
         val intent = Intent(this, GenActivity::class.java)
         intent.putExtra("dif", "3")
-        startActivity(intent)
-    }
-    private fun seasysud(){
-        val intent = Intent(this, GenActivity::class.java)
-        intent.putExtra("dif", "5")
         startActivity(intent)
     }
     private fun lastsud(){

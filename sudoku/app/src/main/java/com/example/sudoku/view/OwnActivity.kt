@@ -15,6 +15,7 @@ import com.example.sudoku.game.Cell
 import com.example.sudoku.view.custom.BoardView
 import com.example.sudoku.viewmodel.playSudokuViewmodel
 import kotlinx.android.synthetic.main.activity_main.*
+import java.security.KeyStore
 
 
 class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
@@ -22,6 +23,8 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
     private lateinit var viewModel: playSudokuViewmodel
     var cellSt: String = ""
     var cellStart: String = ""
+    var easyMod: Boolean = false
+    var changeable: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +35,6 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
         viewModel = ViewModelProviders.of(this).get(playSudokuViewmodel::class.java)
         viewModel.sudokuGame.selectedCellLiveData.observe(this, Observer { updateSelectedCellUI(it) })
         viewModel.sudokuGame.cellsLiveData.observe(this, Observer { updateCells(it) })
-
-
 
         val intent = intent
         if (intent.getIntArrayExtra("ar") != null){
@@ -56,12 +57,20 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
                 viewModel.sudokuGame.handleInput(index + 1)
+                if(easyMod){
+                    viewModel.sudokuGame.easyModOn()
+                }
                 viewModel.sudokuGame.check()
             }
         }
 
-        buttonDel.setOnClickListener{viewModel.sudokuGame.delete()
-            viewModel.sudokuGame.check()}
+        buttonDel.setOnClickListener{
+            viewModel.sudokuGame.delete()
+            if (easyMod){
+                viewModel.sudokuGame.easyModOn()
+            }
+            viewModel.sudokuGame.check()
+        }
     }
 
     override fun onDestroy() {
@@ -88,6 +97,9 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 Toast.makeText(this, "Select empty cell", Toast.LENGTH_SHORT).show()
             } else {
                 viewModel.sudokuGame.SolveOne(this)
+                if(easyMod){
+                    viewModel.sudokuGame.easyModOn()
+                }
                 viewModel.sudokuGame.vivod()
             }
         }
@@ -136,6 +148,11 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 alert.setPositiveButton("Yes"
                 ) { dialog, id ->
                     viewModel.sudokuGame.cleaner()
+                    if (easyMod){
+                        easyMod=false
+                        viewModel.sudokuGame.easyModOff()
+                        viewModel.sudokuGame.vivod()
+                    }
                     Toast.makeText(this, "Cleaned", Toast.LENGTH_SHORT).show()
                 }
                 alert.setNegativeButton("Cancel"
@@ -143,10 +160,7 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                 alert.create().show()
             }
             R.id.done -> {
-                val alert = AlertDialog.Builder(this)
-                alert.setTitle("Done")
-                alert.setMessage("Do cells unchangeable?")
-                alert.setPositiveButton("Yes") { dialog, id ->
+                if(changeable){
                     if (viewModel.sudokuGame.noerr()) {
                         viewModel.sudokuGame.done(this)
                         viewModel.sudokuGame.selectedCellLiveData.postValue(Pair(-1, -1))
@@ -155,13 +169,12 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
                     else{
                         Toast.makeText(this, "There are mistakes in sudoku", Toast.LENGTH_SHORT).show()
                     }
-                }
-                alert.setNeutralButton("Do changeable") { dialog, id ->
+                    changeable = false
+                } else {
                     viewModel.sudokuGame.undone()
                     Toast.makeText(this, "Cells are changeable", Toast.LENGTH_SHORT).show()
+                    changeable = true
                 }
-                alert.setNegativeButton("Cancel") { dialog, id -> }
-                alert.create().show()
             }
             R.id.doo -> {
                 val alert = AlertDialog.Builder(this)
@@ -182,6 +195,16 @@ class OwnActivity : AppCompatActivity(), BoardView.OnTouchListener {
             R.id.save -> {
                 saveGame()
                 Toast.makeText(this, "Sudoku saved", Toast.LENGTH_SHORT).show()
+            }
+            R.id.easy -> {
+                if (!easyMod){
+                    easyMod=true
+                    viewModel.sudokuGame.easyModOn()
+                } else {
+                    easyMod = false
+                    viewModel.sudokuGame.easyModOff()
+                }
+                viewModel.sudokuGame.vivod()
             }
         }
         return super.onOptionsItemSelected(item)

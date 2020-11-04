@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/easy"
+        android:icon="@drawable/ic_baseline_insert_emoticon_24"
+        android:title="Easy mod"
+        app:showAsAction="always" />
+
     <item android:id="@+id/doo"
         android:icon="@drawable/ic_done"
         android:title="Solve sudoku"

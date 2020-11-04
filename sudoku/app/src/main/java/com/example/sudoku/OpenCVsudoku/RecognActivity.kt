@@ -24,7 +24,7 @@ import kotlin.collections.ArrayList
 
 class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
-    private var mOpenCvCameraView: PortraitCameraView ? = null
+    private var mOpenCvCameraView: CameraBridgeViewBase ? = null
 
     var cropped: Mat? = null
 
@@ -37,7 +37,7 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_recogn)
-        mOpenCvCameraView = findViewById<PortraitCameraView>(R.id.view)
+        mOpenCvCameraView = findViewById<CameraBridgeViewBase>(R.id.view)
         mOpenCvCameraView!!.visibility = SurfaceView.VISIBLE
         mOpenCvCameraView!!.setCvCameraViewListener(this)
     }
@@ -131,13 +131,13 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
 
             for (i in 0..3) {
                 if (points[i].x < x && points[i].y < y) {
-                    sortedPoints[0] = Point(points[i].x, points[i].y)
-                } else if (points[i].x > x && points[i].y < y) {
                     sortedPoints[1] = Point(points[i].x, points[i].y)
-                } else if (points[i].x < x && points[i].y > y) {
-                    sortedPoints[2] = Point(points[i].x, points[i].y)
-                } else if (points[i].x > x && points[i].y > y) {
+                } else if (points[i].x > x && points[i].y < y) {
                     sortedPoints[3] = Point(points[i].x, points[i].y)
+                } else if (points[i].x < x && points[i].y > y) {
+                    sortedPoints[0] = Point(points[i].x, points[i].y)
+                } else if (points[i].x > x && points[i].y > y) {
+                    sortedPoints[2] = Point(points[i].x, points[i].y)
                 }
             }
             var nulled: Boolean = false
