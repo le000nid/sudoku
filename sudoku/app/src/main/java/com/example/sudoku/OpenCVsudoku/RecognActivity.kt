@@ -201,65 +201,93 @@ class RecognActivity : AppCompatActivity(), CameraBridgeViewBase.CvCameraViewLis
         tessBaseApi!!.setVariable("classify_bin_numeric_mode", "1")
 
         val output: Mat = cropped!!.clone()
+        val grayMat = Mat()
+        Imgproc.cvtColor(output, grayMat, Imgproc.COLOR_BGR2GRAY)
+        var thresh = Mat()
+        Imgproc.adaptiveThreshold(
+            grayMat,
+            thresh,
+            255.0,
+            Imgproc.ADAPTIVE_THRESH_MEAN_C,
+            Imgproc.THRESH_BINARY_INV,
+            57,
+            5.0
+        )
 
-        val SUDOKU_SIZE = 9
-        val IMAGE_WIDTH: Int = output.width()
-        val IMAGE_HEIGHT: Int = output.height()
-        val PADDING = IMAGE_WIDTH / 25.toDouble()
-        val HSIZE = IMAGE_HEIGHT / SUDOKU_SIZE
-        val WSIZE = IMAGE_WIDTH / SUDOKU_SIZE
-
-        val sudosa = Array(SUDOKU_SIZE) { IntArray(SUDOKU_SIZE) }
-
-        var y: Int = 0
-        var iy: Int = 0
-        while (y < IMAGE_HEIGHT - HSIZE) {
-            var x: Int = 0
-            var ix: Int = 0
-            while (x < IMAGE_WIDTH - WSIZE) {
-                sudosa[iy][ix] = 0
-                val cx: Int = x + WSIZE / 2
-                val cy: Int = y + HSIZE / 2
-                val p1: Point = Point(cx + PADDING, cy + PADDING)
-                val p2: Point = Point(cx - PADDING, cy - PADDING)
-                val R: Rect = Rect(p1, p2)
-                val digit_cropped: Mat = Mat(output, R)
-                val grayMat = Mat()
-                Imgproc.cvtColor(digit_cropped,grayMat,Imgproc.COLOR_BGR2GRAY)
-                val blurMat = Mat()
-                Imgproc.GaussianBlur(grayMat, blurMat, Size(3.0, 3.0), 0.0)
-                val thresh = Mat()
-                Imgproc.adaptiveThreshold(blurMat, thresh, 255.0,Imgproc.ADAPTIVE_THRESH_MEAN_C,Imgproc.THRESH_BINARY_INV,75,10.0)
-                Imgproc.rectangle(output, p1, p2, Scalar(0.0, 0.0, 0.0))
-                val digit_bitmap: Bitmap? = Bitmap.createBitmap(
-                    digit_cropped.cols(),
-                    digit_cropped.rows(),
-                    Bitmap.Config.ARGB_8888
-                )
-                Utils.matToBitmap(thresh, digit_bitmap)
-                tessBaseApi!!.setImage(digit_bitmap)
-                val recognizedText:String = tessBaseApi!!.utF8Text
-                if (recognizedText.length == 1) {
-                    sudosa[iy][ix] = Integer.valueOf(recognizedText)
-                }
-                tessBaseApi!!.clear()
-                x += WSIZE
-                ix++
+        var cnts: List<MatOfPoint> = ArrayList()
+        val hier = Mat()
+        Imgproc.findContours(thresh, cnts, hier, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE)
+        hier.release()
+//        for (i in cnts){
+//            val area = Imgproc.contourArea(i)
+//            if(area<1000){
+//                Imgproc.drawContours(thresh, cnts, -1, Scalar(0.0, 0.0, 0.0), -1)
+//            }
+//        }
+        var cntss: MutableList<MatOfPoint> = ArrayList()
+        for (i in cnts) {
+            if(Imgproc.contourArea(i)<1000){
+                cntss.add(i)
             }
-            Log.i("testing", "" + Arrays.toString(sudosa.get(iy)))
-            y += HSIZE
-            iy++
+        }
+        Imgproc.drawContours(thresh, cntss, -1, Scalar(0.0, 0.0, 0.0), -1)
+
+
+        val vertical_kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(1.0, 5.0))
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, vertical_kernel, Point(-1.0,-1.0), 9)
+        val horizantal_kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(5.0, 1.0))
+        Imgproc.morphologyEx(thresh, thresh, Imgproc.MORPH_CLOSE, horizantal_kernel, Point(-1.0,-1.0), 9)
+
+        val invert = Mat(thresh.rows(),thresh.cols(), thresh.type())
+        Core.bitwise_not(thresh, invert)
+        var cntsinv: List<MatOfPoint> = ArrayList()
+        Imgproc.findContours(invert, cntsinv, hier, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE)
+
+        val boundingRects: MutableList<Rect> = ArrayList()
+        for(i in cntsinv.indices){
+            boundingRects.add(Imgproc.boundingRect(cntsinv[i]))
         }
 
+        boundingRects.sortBy { it.y }
+        val rectRow = mutableListOf<Rect>()
+        var cells = listOf<Rect>()
+        var count = 0
+        for(i in boundingRects.indices){
+            rectRow.add(boundingRects[i])
+            count+=1
+            if (count==9){
+                rectRow.sortBy { it.x }
+                cells += rectRow
+                rectRow.clear()
+                count = 0
+            }
+        }
+
+        var sudosa = IntArray(81) { 0 }
+        for(i in cells.indices) {
+            val digit_cropped = Mat(output, cells[i])
+            val grayMat = Mat()
+            Imgproc.cvtColor(digit_cropped,grayMat,Imgproc.COLOR_BGR2GRAY)
+            val blurMat = Mat()
+            Imgproc.GaussianBlur(grayMat, blurMat, Size(3.0, 3.0), 0.0)
+            val thresh = Mat()
+            Imgproc.adaptiveThreshold(blurMat, thresh, 255.0,Imgproc.ADAPTIVE_THRESH_MEAN_C,Imgproc.THRESH_BINARY_INV,75,10.0)
+            val digit_bitmap: Bitmap? = Bitmap.createBitmap(
+                digit_cropped.cols(),
+                digit_cropped.rows(),
+                Bitmap.Config.ARGB_8888
+            )
+            Utils.matToBitmap(thresh, digit_bitmap)
+            tessBaseApi!!.setImage(digit_bitmap)
+            val recognizedText:String = tessBaseApi!!.utF8Text
+            if (recognizedText.length == 1) {
+                sudosa[i] = Integer.valueOf(recognizedText)
+            }
+            tessBaseApi!!.clear()
+        }
         tessBaseApi!!.end()
-
-        val temp = IntArray(81)
-
-        for (i in 0..80) {
-            temp[i] = sudosa[i/9][i%9]
-        }
         val intent = Intent(this, OwnActivity::class.java)
-        intent.putExtra("ar", temp)
+        intent.putExtra("ar", sudosa)
         startActivity(intent)
     }
 }
